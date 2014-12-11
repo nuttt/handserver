@@ -28,7 +28,7 @@ class ServiceController extends BaseController {
   }
 
   public function result($filename) {
-    return View::make('result',array('filename'=>$filename));
+    return View::make('result2',array('filename'=>$filename));
   }
 
 }

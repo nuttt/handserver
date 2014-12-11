@@ -22,6 +22,7 @@
 		border-radius: 10px;
 		margin-top: 20px;
 		color: #333;
+		padding: 10px 20px;
 	}
 	
 	#typo
@@ -42,7 +43,7 @@
 	}
 	
 	body {
-		background-image: url('img/swirl_pattern.png');
+		background-image: url('{{ URL::to('../app/views/img/swirl_pattern.png') }}');
 		background-repeat: repeat-x repeat-y;
 	}
 	</style>
@@ -53,16 +54,46 @@
 	<div data-role="page" id="page" class="wrap">
 		<div data-role="header" style="text-align: center; margin-top: 10px;">
 			<!--<h1 id="typo">คำทำนายของคุณ</h1>-->
-			<img src="C:\Users\zeta\Desktop\Learning HTML and CSS\img\header.gif">
+			{{ HTML::image('../app/views/img/header.gif', "คำทำนายของคุณ") }}
 		</div>
 		<div style="margin:auto;text-align: center; margin-top: 10px;">
-		 	<img src="C:\Users\zeta\Desktop\Learning HTML and CSS\img\italy7.jpg" style="max-width:80%;height:auto;">
+			{{ HTML::image('../app/output/'.$filename.'.jpg', "เส้นลายมือของคุณ", ['style'=>"max-width:80%;height:auto;"]) }}
+		 	
 		</div>
 		
 		<div data-role="content" class="wrap2">    
 			<p>
-				ผลการทำนายอยู่นี่
-			</p>    
+				<?php 
+					function tis620_to_utf8($tis) {
+						$utf8 = '';
+						for( $i=0 ; $i< strlen($tis) ; $i++ ){
+							$s = substr($tis, $i, 1);
+							$val = ord($s);
+							if( $val < 0x80 ){
+								$utf8 .= $s;
+							} 
+							elseif ((0xA1 <= $val and $val <= 0xDA) 
+								or (0xDF <= $val and $val <= 0xFB)) {
+								$unicode = 0x0E00 + $val - 0xA0;
+								$utf8 .= chr( 0xE0 | ($unicode >> 12) );
+								$utf8 .= chr( 0x80 | (($unicode >> 6) & 0x3F) );
+								$utf8 .= chr( 0x80 | ($unicode & 0x3F) );
+							}
+						}
+						return $utf8;
+					}
+					$myfile = fopen("../app/output/".$filename.'.txt', "r") or die("unable to open file!");
+					if(filesize("../app/output/".$filename.'.txt') > 0) {
+						$text = fread($myfile, filesize("../app/output/".$filename.'.txt'));
+						$text = tis620_to_utf8($text);
+						echo $text;
+					}
+					else {
+						echo "คำทำนายของคุณไม่ชัดเจน โปรดถ่ายรุปใหม่อีกครั้ง";
+					}
+					fclose($myfile);
+				?>
+			</p>        
 		</div>
 	</div>
 
