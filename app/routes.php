@@ -17,3 +17,4 @@ Route::get('/', function()
 });
 
 Route::any('/predict', 'ServiceController@predict');
+Route::any('/result/{filename}', 'ServiceController@result');
