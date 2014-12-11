@@ -9,14 +9,20 @@ class ServiceController extends BaseController {
   // Handle Incoming Request from native app
   public function predict() {
 
-    $destinationPath = storage_path().'/uploads';
-    $filename = time()."_".md5(rand());
-
-    if( Input::hasFile('image') ) {
-      Input::file('photo')->move($destinationPath, $filename);
+    $destinationPath = storage_path().'\uploads\\';
+    $filename = time()."_".md5(rand()).".jpg";
+    // Input::file('picture')->move($destinationPath, $filename);
+    if( Input::hasFile('picture') ) {
+      Input::file('picture')->move($destinationPath, $filename);
     }
-
-    return $filename;
+    else{
+      return View::make('hello')->with('value',"Please Select Your Picture.");
+    }
+    $c = 'C:\xampp\htdocs\handserver\stub.exe '.$filename;
+    $output = array();
+    exec($c,$output,$return_var);
+    // return View::make('result')->with('value',$output[0].' '.$return_var);
+    return View::make('result',array('data'=>$output,'return'=>$return_var));
   }
 
   public function result() {
